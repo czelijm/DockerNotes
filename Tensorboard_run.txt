@@ -1,0 +1,5 @@
+docker pull lspvic/tensorboard-notebook
+
+docker run --rm -it -v `pwd -W`:/usr/src/app -w /usr/src/app -p 8888:8888 lspvic/tensorboard-notebook
+
+Do what says in the output of the console.

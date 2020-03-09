@@ -1,0 +1,4 @@
+// to run docker on windows host
+// port 80 allow http
+// port 443 allow https
+docker run --rm -it -v `pwd -W`:/usr/src/app/ -p 3000:3000 -p 80:80 -p 443:443 -w /usr/src/app ca14 npx nodemon --legacy-watch

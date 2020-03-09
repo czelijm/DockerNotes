@@ -1,0 +1,131 @@
+ docker run --rm -it -v `pwd -W`:/usr/src/app  dock_nameorID
+
+ g++ -ggdb IRgByPixelisation.cpp ReadModel.cpp `pkg-config --cflags --libs opencv4` -o a.out
+
+
+# build image
+# docker build -t czelijm/node-development-test .
+
+# run image and run nodemon
+# docker run -commands-for-docker your_dockerhub_username/image-name commands and arguments
+# docker run --rm -it -p 3000:3000 -v `pwd -W`:/usr/src/app  czelijm/node-development-test npx nodemon
+#FOR WINDOWS
+# docker run --rm -it -p 3000:3000 -v `pwd -W`:/usr/src/app czelijm/node-development-test npx nodemon --legacy-watch index.js
+
+
+
+
+I use the workaround described by dsebastien in the issue linked in my previous reply
+with a small modification to avoid changing the calling shell environment.
+This is what I use as workaround now, in my ~/.bash_profile on Windows 10, Git Bash:
+
+# Workaround for Docker for Windows in Git Bash.
+docker()
+{
+        (export MSYS_NO_PATHCONV=1; "docker.exe" "$@")
+}
+
+#for reveal js install error
+Fix for Nodejs v12.10.0
+update node-sass to version ^4.12.0 in your package.json
+npm install
+npm audit fix
+
+
+#for reveal js
+docker run --rm -it -v `pwd -W`:/usr/src/app -w /usr/src/app -p 8000:8000 d0 npm start
+
+// to run docker on windows host
+// port 80 allow http
+// port 443 allow https
+// docker run --rm -it -v `pwd -W`:/usr/src/app/ -p 3000:3000 -p 80:80 -p 443:443 -w /usr/src/app ca14 npx nodemon --legacy-watch
+
+
+
+
+
+
+# From which docker image we want to extend
+FROM node:10
+
+# make directory and change rights to this directory
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
+
+# set work directory
+WORKDIR /home/node/app
+
+# copy to to the working directory our package*json files (2 files)
+COPY package*.json ./
+
+# To ensure that all of the application files are owned by the non-root node user, including the contents of the node_modules directory, switch the user to node before running npm install
+USER node
+
+# install desired dependencies
+RUN npm install
+
+# copy rest of the files
+# COPY . .
+
+# COPY rest of the files with apriorative permission
+COPY --chown=node:node . .
+
+# expose hte port of the image to the port of the host
+EXPOSE 3000
+
+# RUN commnad: node index.js
+RUN ["node","calculator.js"]
+
+
+
+#--------------------------------------------------------------------------------------------
+
+# make .dockerignore files
+# run in commandline:
+# docker build -t your_dockerhub_username/nodejs-image-demo .
+# It will take a minute or two to build the image. Once it is complete, check your images:
+# run images
+# docker run --rm -it your_dockerhub_username/nodejs-image-demo command
+#--------------------------------------------------------------------------------------------
+
+# If you know when you’re creating a container that you won’t want to keep it around once you’re done, you can run docker run --rm to automatically delete it when it exits.
+# --interactive , -i		Keep STDIN open even if not attached
+# --tty , -t		Allocate a pseudo-TTY
+# --volume , -v		Bind mount a volume,  -v `pwd`:/usr/srd/app   present working directory
+#--------------------------------------------------------------------------------------------
+# docker run --rm -it -v  ${pwd}:/usr/src/app  czelijm/nodejs-image-demo sh
+# `pwd`, `pwd -W`, /${pwd}, /$(pwd)
+#--------------------------------------------------------------------------------------------
+# GIVE THE PERMISION TO THE DOCKER BY IN THE DOCKER SETTING
+# YOU HAVE TO USE YOUR MICROSOFT ACCOUND PASSWORD
+#
+# ENTRYPOINT RUNS BEFORE CMD
+#--------------------------------------------------------------------------------------------
+# build for development
+# docker build --target=dev -t your_dockerhub_username/nodejs-image-demo .
+#--------------------------------------------------------------------------------------------
+# force stop
+# docker rmi -f <image_id>
+#
+#
+# You should try to remove unnecessary images before removing the image:
+# docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
+# After that, run:
+# docker rmi c565603bc87f
+# rmi $(docker images -a -q)
+#
+#delete all none docker images
+#docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
+#docker rmi $(docker images -a|grep "<none>"|awk '$1=="<none>" {print $3}')
+#GENERAL RULE
+#docker rmi $(command-that-will-print-all-desired-docker-files)
+#
+#remove all containers
+#docker rm $(docker ps -a -q)
+#--------------------------------------------------------------------------------------------
+# docker process list
+# docker ps
+# kill docker
+# docker kill docker_id
+#--------------------------------------------------------------------------------------------
+# NPM - Manages packages but doesn't make life easy executing any.
+# NPX - A tool for executing Node packages.

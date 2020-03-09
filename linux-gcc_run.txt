@@ -1,0 +1,3 @@
+ g++ -ggdb IRgByPixelisation.cpp ReadModel.cpp `pkg-config --cflags --libs opencv4` -o a.out
+ 
+ g++ -ggdb IRgByPixelisation.cpp ReadModel.cpp `pkg-config --cflags --libs opencv` -o a.out
