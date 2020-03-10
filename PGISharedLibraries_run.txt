@@ -1,0 +1,72 @@
+xhost + 
+
+docker run --privileged -v /dev/video0:/dev/video0 -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY -p 5000:5000 -p 8888:8888 -v `pwd`:/usr/src/app -w /usr/src/app -it --rm spmallick/opencv-docker:opencv-4 /bin/bash
+
+
+
+inside docker
+g++ -ggdb main.cpp NAFFD_ACCv2.cpp faceDetectionVJ.cpp videoProcessing.cpp  ReadModel.cpp cvMatToArrayTocvMat.cpp `pkg-config --cflags --libs opencv4` -o a.out
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/pgi/linux86-64-llvm/19.10/lib/
+
+
+
+pgi
+
+pgcc -acc -ta=tesla:nordc -c libmyacc.c
+pgcc -g -fPIC -acc -ta=tesla:managed -c libmyacc.c
+
+
+shared Library
+
+gcc -std=c99 -Wall -Wextra -g -shared NAFFD_ACCv2.o -o libNAFFD_ACCv2.so
+
+
+compile
+g++ -ggdb main.cpp faceDetectionVJ.cpp videoProcessing.cpp cvMatToArrayTocvMat.cpp `pkg-config --cflags --libs opencv4` -L. -l:libNAFFD_ACCv2.so -l:libReadModel.so /opt/pgi/linux86-64-llvm/19.10/lib/lib*.so  /opt/pgi/linux86-64-llvm/19.10/REDIST/lib*.so -l:libcudaforwrapblas.so  -o a.out
+
+
+add env library path
+export LD_LIBRARY_PATH=/usr/src/app:/opt/pgi/linux86-64-llvm/19.10/lib:${LD_LIBRARY_PATH}
+
+
+SHARED LIRARY
+
+First, it is -std=c99 with a single dash.
+
+I guess you are on Linux.
+
+Then, you always should pass -Wall -Wextra -g (especially since you are a newbie) to gcc : -Wall ask for nearly all warnings, -Wextra for even more warnings, -g ask for debug information.
+
+At last, you want to produce an executable myprog (don't name executables as c.o, this is supposed to be an object file) with
+
+gcc -std=c99 -Wall -Wextra -g -o myprog c.c a.o b.o
+You need to remove any -c since you want the linking to happen.
+
+If you really mean -but that is very unusual today, better make shared libraries!- to agglomerate several object files into one all.o (to be linked later with other objects) you might try the -r linker option
+
+gcc -std=c99 -Wall -Wextra -g -r c.c a.o b.o -o all.o
+But last time I tried it was in the previous century, so details could be wrong.
+
+There are very few reasons to agglomerate objects using the -r linker option. Unless you really know what you are doing, you are very probably wrong (in trying -r).
+
+Perhaps you want to make a software library. These days it is much better to make a shared library. A shared library (technically an ELF shared object) should contain position independent code. So, assuming you have three translation units t1.c, t2.c, t3.c you first compile them as PIC :
+
+ gcc -std=c99 -Wall -Wextra -g -fPIC t1.c -c -o t1.pic.o
+ gcc -std=c99 -Wall -Wextra -g -fPIC t2.c -c -o t2.pic.o
+ gcc -std=c99 -Wall -Wextra -g -fPIC t3.c -c -o t3.pic.o
+then you link all these PIC object files into a shared library libmyt.so
+
+ gcc -std=c99 -Wall -Wextra -g -shared \
+    t1.pic.o t2.pic.o t3.pic.o \
+    -o libmyt.so
+Later you'll use this shared library e.g. as
+
+ gcc -std=c99 -Wall -Wextra -g main.o -o myprog -Wl,-rpath . libmyt.so
+or as
+
+ gcc -std=c99 -Wall -Wextra -g main.o -o myprog -Wl,-rpath . -L. -lmyt
+You might consider static linking with ar to make a static library libmyt.a but I don't recommend that.
+
+Of course, you'll debug your program using gdb ./myprog and you could try running it with ./myprog. To use valgrind, try valgrind ./myprog
