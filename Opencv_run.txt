@@ -1,4 +1,4 @@
 xhost + 
 
-docker run --privileged -v /dev/video0:/dev/video0 -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY -p 5000:5000 -p 8888:8888 -v `pwd`:/usr/src/app -w /usr/src/app -it --rm spmallick/opencv-docker:opencv-4 /bin/bash
+docker run --privileged -v /dev/video0:/dev/video0 -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY --runtime=nvidia  -p 5000:5000 -p 8888:8888 -v `pwd`:/usr/src/app -w /usr/src/app -it --rm 8e5 /bin/bash
 
