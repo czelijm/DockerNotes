@@ -16,19 +16,41 @@ pgi
 
 pgcc -acc -ta=tesla:nordc -c libmyacc.c
 pgcc -g -fPIC -acc -ta=tesla:managed -c libmyacc.c
+pgcc -g -fPIC -acc -ta=tesla:nordc -Minfo=accel -c NAFFD_ACCv3.c
+pgcc -g -fPIC -acc -ta=tesla -Mcuda=nordc -Minfo=accel -c NAFFD_ACCv3.c     
 
 
 shared Library
 
 gcc -std=c99 -Wall -Wextra -g -shared NAFFD_ACCv2.o -o libNAFFD_ACCv2.so
-
+pgcc -g -fPIC -shared  -acc -ta=tesla:nordc -Minfo=accel NAFFD_ACCv4.c -o libNAFFD_ACCv4.so
 
 compile
-g++ -ggdb main.cpp faceDetectionVJ.cpp videoProcessing.cpp cvMatToArrayTocvMat.cpp `pkg-config --cflags --libs opencv4` -L. -l:libNAFFD_ACCv2.so -l:libReadModel.so /opt/pgi/linux86-64-llvm/19.10/lib/lib*.so  /opt/pgi/linux86-64-llvm/19.10/REDIST/lib*.so -l:libcudaforwrapblas.so  -o a.out
+g++ -ggdb main.cpp faceDetectionVJ.cpp videoProcessing.cpp cvMatToArrayTocvMat.cpp `pkg-config --cflags --libs opencv4` -L. -l:libNAFFD_ACCv3.so -l:libReadModel.so /opt/pgi/linux86-64-llvm/19.10/lib/lib*.so  /opt/pgi/linux86-64-llvm/19.10/REDIST/lib*.so -l:libcudaforwrapblas.so  -o a.out
+
+g++ -ggdb main.cpp faceDetectionVJ.cpp videoProcessing.cpp cvMatToArrayTocvMat.cpp `pkg-config --cflags --libs opencv4` -L. -l:libNAFFD_ACCv4.so -l:libReadModel.so /opt/pgi/linux86-64-llvm/19.10/lib/lib*.so  /opt/pgi/linux86-64-llvm/19.10/REDIST/lib*.so -l:libcudaforwrapblas.so /usr/local/cuda-10.1/lib64/lib*.so  -o a.out
 
 
+ls /op	
 add env library path
-export LD_LIBRARY_PATH=/usr/src/app:/opt/pgi/linux86-64-llvm/19.10/lib:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=/usr/src/app:/opt/pgi/linux86-64-llvm/19.10/lib:/usr/local/cuda-10.1/extras/CUPTI/lib64:${LD_LIBRARY_PATH}
+
+export LD_LIBRARY_PATH=/opt/pgi/linux86-64-llvm/2019/cuda/10.1/lib64:${LD_LIBRARY_PATH}
+
+
+
+Show kernel execution times
+export PGI_ACC_TIME=1
+
+
+
+
+
+
+
+
+
+
 
 
 SHARED LIRARY
