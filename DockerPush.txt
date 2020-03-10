@@ -1,0 +1,3 @@
+docker tag image-name usr-name/repository-name:tag
+
+docker push usr-name/repository-name:tag
