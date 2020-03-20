@@ -1,0 +1,22 @@
+// to run docker on windows host
+// port 80 allow http
+// port 443 allow https
+docker run --rm -it -v `pwd -W`:/usr/src/app/ -p 27017:27017 -p 80:80 -p 443:443 -w /usr/src/app bce /bin/bash
+
+//get inside container
+docker exec -it <mycontainername> bash
+docker exec -it mongo bash
+
+
+//to run db
+mongod & 
+
+//to run mongo shell
+mongo
+
+show dbs
+
+
+
+//to mongodb docker on Windows you need to use binds not the volumes.
+

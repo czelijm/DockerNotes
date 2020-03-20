@@ -1,0 +1,22 @@
+docker run --privileged -v /dev/video0:/dev/video0 -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY --runtime=nvidia  -p 5000:5000 -p 8888:8888 -v `pwd`:/usr/src/app -w /usr/src/app -it --rm nvidia/opencl:devel-ubuntu18.04 /bin/bash
+
+apt-get update && \
+apt-get install software-properties-common&& \
+add-apt-repository ppa:ubuntu-toolchain-r/test&& \
+add-apt-repository ppa:savoury1/gcc-defaults-9&& \
+apt-get update&& \
+apt-get upgrade && \
+apt-get dist-upgrade&& \
+apt-get install gcc-9;
+
+gcc-9 -o a.out helloworld.c -lOpenCL
+
+
+
+
+//-------------------------------------------------------------------------------------------
+g++ -ggdb main.cpp faceDetectionVJ.cpp videoProcessingCL.cpp cvMatToArrayTocvMat.cpp NAFFD_ACCv6.c  `pkg-config --cflags --libs opencv4` -L. -l:libReadModel.so ./openclFunctionNew.so /opt/pgi/linux86-64-llvm/19.10/lib/lib*.so  /opt/pgi/linux86-64-llvm/19.10/REDIST/lib*.so -l:libcudaforwrapblas.so /usr/local/cuda-10.1/lib64/lib*.so /usr/local/cuda-10.1/targets/x86_64-linux/lib/libOpenCL.so -o a.out
+
+
+g++ -ggdb main.cpp faceDetectionVJ.cpp videoProcessingCL.cpp cvMatToArrayTocvMat.cpp NAFFD_ACCv6.c openclFunctionNew.c  `pkg-config --cflags --libs opencv4` -L. -l:libReadModel.so /opt/pgi/linux86-64-llvm/19.10/lib/lib*.so  /opt/pgi/linux86-64-llvm/19.10/REDIST/lib*.so -l:libcudaforwrapblas.so /usr/local/cuda-10.1/lib64/lib*.so /usr/local/cuda-10.1/targets/x86_64-linux/lib/libOpenCL.so -o a.out
+
