@@ -20,3 +20,8 @@ g++ -ggdb main.cpp faceDetectionVJ.cpp videoProcessingCL.cpp cvMatToArrayTocvMat
 
 g++ -ggdb main.cpp faceDetectionVJ.cpp videoProcessingCL.cpp cvMatToArrayTocvMat.cpp NAFFD_ACCv6.c openclFunctionNew.c  `pkg-config --cflags --libs opencv4` -L. -l:libReadModel.so /opt/pgi/linux86-64-llvm/19.10/lib/lib*.so  /opt/pgi/linux86-64-llvm/19.10/REDIST/lib*.so -l:libcudaforwrapblas.so /usr/local/cuda-10.1/lib64/lib*.so /usr/local/cuda-10.1/targets/x86_64-linux/lib/libOpenCL.so -o a.out
 
+
+g++ -ggdb main.cpp extractRoiFromImage.c faceDetectionVJ.cpp videoProcessingCL.cpp cvMatToArrayTocvMat.cpp NAFFD_ACCv6.c openclFunctionNew.c  `pkg-config --cflags --libs opencv4` -L. -l:libReadModel.so /opt/pgi/linux86-64-llvm/19.10/lib/lib*.so  /opt/pgi/linux86-64-llvm/19.10/REDIST/lib*.so -l:libcudaforwrapblas.so /usr/local/cuda-10.1/lib64/lib*.so /usr/local/cuda-10.1/targets/x86_64-linux/lib/libOpenCL.so -o a.out
+
+
+
