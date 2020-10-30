@@ -1,0 +1,6 @@
+# Run from elevated prompt (admin privileges)
+bcdedit /set hypervisorlaunchtype off
+And to start using Docker for Windows again, re-enable Hyper-V:
+
+# Run from elevated prompt (admin privileges)
+bcdedit /set hypervisorlaunchtype auto
